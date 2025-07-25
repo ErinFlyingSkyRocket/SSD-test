@@ -30,8 +30,12 @@ def search():
     except ValueError as e:
         return jsonify(error=str(e)), 400
 
+    # Your static dataset
     items = ["Flask", "MySQL", "Gitea", "Docker", "Nginx", "Adminer"]
+
+    # Filter items based on sanitized input
     filtered = [item for item in items if sanitized_term in item.lower()] if sanitized_term else items
+
     return jsonify(filtered)
 
 if __name__ == '__main__':

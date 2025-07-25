@@ -13,17 +13,22 @@
     <button onclick="search()">Search</button>
 
     <p id="message"></p>
-
-    <ul id="itemList"></ul>
   </div>
 
   <script>
-    async function search(termOverride = null) {
-      const input = document.getElementById('searchInput');
-      const msg = document.getElementById('message');
-      const list = document.getElementById('itemList');
+    // ✅ Clear previous session data
+    sessionStorage.clear();
 
-      const term = termOverride !== null ? termOverride : input.value;
+    async function search() {
+      const input = document.getElementById('searchInput');
+      const term = input.value.trim();
+      const msg = document.getElementById('message');
+
+      if (!term) {
+        msg.textContent = 'Please enter a search term.';
+        msg.className = 'error';
+        return;
+      }
 
       try {
         const res = await fetch(`/api/search?term=${encodeURIComponent(term)}`);
@@ -32,34 +37,18 @@
         if (!res.ok) {
           msg.textContent = data.error || 'Error occurred';
           msg.className = 'error';
-          list.innerHTML = '';
           input.value = '';
           return;
         }
 
-        msg.textContent = '';
-        msg.className = '';
-        list.innerHTML = '';
-
-        if (data.length === 0) {
-          const li = document.createElement('li');
-          li.textContent = 'No results found.';
-          list.appendChild(li);
-        } else {
-          data.forEach(item => {
-            const li = document.createElement('li');
-            li.textContent = item;
-            list.appendChild(li);
-          });
-        }
+        sessionStorage.setItem('searchResult', JSON.stringify(data));
+        sessionStorage.setItem('searchTerm', term);
+        window.location.href = 'result.html';
       } catch (err) {
         msg.textContent = 'Network or server error';
         msg.className = 'error';
       }
     }
-
-    // Automatically load full list on page load
-    window.onload = () => search('');
   </script>
 </body>
 </html>
