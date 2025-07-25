@@ -8,52 +8,58 @@
 <body>
   <div class="container">
     <h2>Search Items</h2>
-    
+
     <input type="text" id="searchInput" placeholder="Enter search term" />
     <button onclick="search()">Search</button>
 
-    <ul id="itemList">
-      <li>Flask</li>
-      <li>MySQL</li>
-      <li>Gitea</li>
-      <li>Docker</li>
-      <li>Nginx</li>
-      <li>Adminer</li>
-    </ul>
+    <p id="message"></p>
+
+    <ul id="itemList"></ul>
   </div>
 
   <script>
-    async function search() {
-        const input = document.getElementById('searchInput');
-        const term = input.value;
+    async function search(termOverride = null) {
+      const input = document.getElementById('searchInput');
+      const msg = document.getElementById('message');
+      const list = document.getElementById('itemList');
 
+      const term = termOverride !== null ? termOverride : input.value;
+
+      try {
         const res = await fetch(`/api/search?term=${encodeURIComponent(term)}`);
-        const msg = document.getElementById('message');
-        const list = document.getElementById('itemList');
+        const data = await res.json();
 
-        if (res.ok) {
-        const items = await res.json();
-        list.innerHTML = '';
+        if (!res.ok) {
+          msg.textContent = data.error || 'Error occurred';
+          msg.className = 'error';
+          list.innerHTML = '';
+          input.value = '';
+          return;
+        }
+
         msg.textContent = '';
-        items.forEach(item => {
+        msg.className = '';
+        list.innerHTML = '';
+
+        if (data.length === 0) {
+          const li = document.createElement('li');
+          li.textContent = 'No results found.';
+          list.appendChild(li);
+        } else {
+          data.forEach(item => {
             const li = document.createElement('li');
             li.textContent = item;
             list.appendChild(li);
-        });
-        } else {
-        const err = await res.json();
-        msg.textContent = err.error;
-        msg.className = 'error';
-
-        // clear input and keep on home page
-        input.value = '';
-        list.innerHTML = '';
+          });
         }
+      } catch (err) {
+        msg.textContent = 'Network or server error';
+        msg.className = 'error';
+      }
     }
 
-    // auto-load all on page load
-    window.onload = search;
-    </script>
-
+    // Automatically load full list on page load
+    window.onload = () => search('');
+  </script>
 </body>
 </html>
