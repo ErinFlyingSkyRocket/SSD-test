@@ -1,0 +1,51 @@
+# 📄 .github/workflows/owasp-dependency.yml
+name: 🔍 OWASP Dependency Scan
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  dependency-scan:
+    runs-on: ubuntu-latest
+    name: 🛡️ OWASP Dependency Check
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v3
+
+      - name: ☕ Setup Java (required for OWASP CLI)
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: 📦 Install Node.js (to scan frontend)
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: 🛠 Install frontend dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: 📥 Download Dependency-Check
+        run: |
+          curl -sLO https://github.com/jeremylong/DependencyCheck/releases/download/v9.0.9/dependency-check-9.0.9-release.zip
+          unzip dependency-check-9.0.9-release.zip -d dependency-check
+          chmod +x dependency-check/bin/dependency-check.sh
+
+      - name: 🛡️ Run OWASP Dependency-Check
+        run: |
+          ./dependency-check/bin/dependency-check.sh \
+            --project "SSD-Test App" \
+            --scan frontend backend \
+            --format HTML \
+            --out owasp-report
+
+      - name: 📤 Upload OWASP HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: owasp-dependency-report
+          path: owasp-report/dependency-check-report.html
