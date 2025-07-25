@@ -4,3 +4,38 @@
 07:21:21.960041 version@stat F·[] S·0B[] Sc·[]
 07:21:21.972814 db@janitor F·2 G·0
 07:21:21.973024 db@open done T·15.390639ms
+=============== Jul 25, 2025 (UTC) ===============
+07:33:32.579314 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+07:33:32.595339 version@stat F·[] S·0B[] Sc·[]
+07:33:32.597462 db@open opening
+07:33:32.601409 journal@recovery F·1
+07:33:32.602142 journal@recovery recovering @1
+07:33:32.620192 memdb@flush created L0@2 N·28 S·574B "act..igh,v28":"web..low,v19"
+07:33:32.624054 version@stat F·[1] S·574B[574B] Sc·[0.25]
+07:33:32.661407 db@janitor F·3 G·0
+07:33:32.661599 db@open done T·63.178412ms
+=============== Jul 25, 2025 (UTC) ===============
+07:35:45.298034 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+07:35:45.303752 version@stat F·[1] S·574B[574B] Sc·[0.25]
+07:35:45.304150 db@open opening
+07:35:45.310406 journal@recovery F·1
+07:35:45.310686 journal@recovery recovering @3
+07:35:45.333929 memdb@flush created L0@5 N·6 S·208B "rep..\x00\x00\x00,d34":"rep..e-1,v30"
+07:35:45.338734 version@stat F·[2] S·782B[782B] Sc·[0.50]
+07:35:45.397749 db@janitor F·4 G·0
+07:35:45.398507 db@open done T·94.224857ms
+07:38:51.649942 table@compaction L0·2 -> L1·0 S·782B Q·36
+07:38:51.668285 table@build created L1@8 N·28 S·572B "act..igh,v28":"web..low,v19"
+07:38:51.669071 version@stat F·[0 1] S·572B[0B 572B] Sc·[0.00 0.00]
+07:38:51.683069 table@compaction committed F-1 S-210B Ke·0 D·6 T·32.309683ms
+07:38:51.686473 table@remove removed @5
+07:38:51.689223 table@remove removed @2
+=============== Jul 25, 2025 (UTC) ===============
+07:41:27.435542 log@legend F·NumFile S·FileSize N·Entry C·BadEntry B·BadBlock Ke·KeyError D·DroppedEntry L·Level Q·SeqNum T·TimeElapsed
+07:41:27.441499 version@stat F·[0 1] S·572B[0B 572B] Sc·[0.00 0.00]
+07:41:27.441929 db@open opening
+07:41:27.443120 journal@recovery F·1
+07:41:27.443339 journal@recovery recovering @6
+07:41:27.445741 version@stat F·[0 1] S·572B[0B 572B] Sc·[0.00 0.00]
+07:41:27.465484 db@janitor F·3 G·0
+07:41:27.465700 db@open done T·23.607959ms

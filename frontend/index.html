@@ -1,18 +1,59 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Frontend</title>
+  <meta charset="UTF-8">
+  <title>Home - SSD Project</title>
+  <link rel="stylesheet" href="/assets/styles.css">
 </head>
 <body>
-  <h1>Frontend Page</h1>
-  <div id="message">Loading...</div>
+  <div class="container">
+    <h2>Search Items</h2>
+    
+    <input type="text" id="searchInput" placeholder="Enter search term" />
+    <button onclick="search()">Search</button>
+
+    <ul id="itemList">
+      <li>Flask</li>
+      <li>MySQL</li>
+      <li>Gitea</li>
+      <li>Docker</li>
+      <li>Nginx</li>
+      <li>Adminer</li>
+    </ul>
+  </div>
 
   <script>
-    fetch('/api/hello')
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById('message').textContent = data.message;
-      });
-  </script>
+    async function search() {
+        const input = document.getElementById('searchInput');
+        const term = input.value;
+
+        const res = await fetch(`/api/search?term=${encodeURIComponent(term)}`);
+        const msg = document.getElementById('message');
+        const list = document.getElementById('itemList');
+
+        if (res.ok) {
+        const items = await res.json();
+        list.innerHTML = '';
+        msg.textContent = '';
+        items.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = item;
+            list.appendChild(li);
+        });
+        } else {
+        const err = await res.json();
+        msg.textContent = err.error;
+        msg.className = 'error';
+
+        // clear input and keep on home page
+        input.value = '';
+        list.innerHTML = '';
+        }
+    }
+
+    // auto-load all on page load
+    window.onload = search;
+    </script>
+
 </body>
 </html>

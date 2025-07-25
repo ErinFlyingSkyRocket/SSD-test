@@ -1,31 +1,38 @@
 from flask import Flask, request, jsonify
-from extensions import db
-from models import User
-import os
+import re
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = (
-    f"mysql+pymysql://{os.environ.get('MYSQL_USER')}:{os.environ.get('MYSQL_PASSWORD')}"
-    f"@{os.environ.get('MYSQL_HOST')}/{os.environ.get('MYSQL_DB')}"
-)
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db.init_app(app)
+def sanitize_search_term(term):
+    """
+    Sanitize input to prevent XSS and SQL injection.
+    Allows only alphanumerics, spaces, underscores, hyphens.
+    """
+    term = term.strip()
+    if len(term) > 100:
+        raise ValueError("Search term too long")
 
-@app.route('/api/register', methods=['POST'])
-def register():
-    data = request.json
-    user = User(username=data['username'], password=data['password'])
-    db.session.add(user)
-    db.session.commit()
-    return jsonify(message="User registered")
+    # Block dangerous characters and patterns
+    if re.search(r"[<>'\";=()]", term) or re.search(r"\b(SELECT|DROP|INSERT|DELETE|UPDATE|UNION|--|#)\b", term, re.IGNORECASE):
+        raise ValueError("Potential SQL injection detected")
 
-@app.route('/api/users')
-def get_users():
-    users = User.query.all()
-    return jsonify([u.username for u in users])
+    if not re.match(r'^[\w\s-]*$', term):
+        raise ValueError("Invalid characters in search term")
+
+    return term
+
+@app.route('/api/search')
+def search():
+    term = request.args.get('term', '')
+
+    try:
+        sanitized_term = sanitize_search_term(term).lower()
+    except ValueError as e:
+        return jsonify(error=str(e)), 400
+
+    items = ["Flask", "MySQL", "Gitea", "Docker", "Nginx", "Adminer"]
+    filtered = [item for item in items if sanitized_term in item.lower()] if sanitized_term else items
+    return jsonify(filtered)
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     app.run(host='0.0.0.0', port=5000)
