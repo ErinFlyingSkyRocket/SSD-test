@@ -1,0 +1,22 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Logs and local envs
+*.log
+.env
+
+# Mac/Linux system files
+.DS_Store
+Thumbs.db
+
+# VSCode config
+.vscode/
+
+# Node modules (if frontend is involved)
+node_modules/
+
+# Optional: If you want to ignore venvs generally but allow this one
+# venv/
+# !.venv/
